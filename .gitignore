@@ -1,0 +1,3 @@
+.workbuddy/
+*.pyc
+__pycache__/

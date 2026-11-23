@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Agent 学习计划 · 从零到就业</title>
+<style>
+  :root{
+    --bg:#f7f8fa; --surface:#ffffff; --surface2:#f1f3f6; --line:#e3e6ec;
+    --text:#1a1d24; --muted:#5c6472; --faint:#8b93a1;
+    --blue:#2563eb; --blue-soft:#eff5ff; --blue-line:#bfd4ff;
+    --amber:#b45309; --amber-soft:#fff7ea; --amber-line:#f5d9a8;
+    --green:#047857; --green-soft:#eaf8f1; --green-line:#a7e0c4;
+    --purple:#6d28d9; --purple-soft:#f5f0ff; --purple-line:#d8c4fb;
+    --radius:14px; --shadow:0 1px 3px rgba(16,24,40,.06),0 8px 24px rgba(16,24,40,.04);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    background:var(--bg); color:var(--text); line-height:1.7; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1040px;margin:0 auto;padding:0 24px}
+  a{color:inherit}
+
+  /* header */
+  header{padding:64px 0 48px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#fff 0%,var(--bg) 100%)}
+  .badge{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--blue);
+    background:var(--blue-soft);border:1px solid var(--blue-line);padding:6px 14px;border-radius:999px;font-weight:600}
+  .badge .dot{width:7px;height:7px;border-radius:50%;background:var(--blue)}
+  h1{font-size:40px;line-height:1.25;font-weight:800;letter-spacing:-.02em;margin:20px 0 14px}
+  h1 span{color:var(--blue)}
+  .sub{font-size:17px;color:var(--muted);max-width:680px}
+  .meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+  .meta div{font-size:13px;color:var(--muted);background:var(--surface);border:1px solid var(--line);
+    padding:7px 13px;border-radius:8px}
+  .meta b{color:var(--text);font-weight:700}
+
+  /* stats */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:36px 0 0}
+  .stat{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow)}
+  .stat .n{font-size:30px;font-weight:800;letter-spacing:-.02em}
+  .stat .l{font-size:13px;color:var(--muted);margin-top:2px}
+  .stat.b .n{color:var(--blue)} .stat.a .n{color:var(--amber)}
+  .stat.g .n{color:var(--green)} .stat.p .n{color:var(--purple)}
+
+  /* progress */
+  .progress-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+    padding:22px 24px;margin:32px 0 0;box-shadow:var(--shadow)}
+  .progress-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+  .progress-head h3{font-size:16px;font-weight:700}
+  .progress-head .pct{font-size:14px;color:var(--muted)}
+  .progress-head .pct b{font-size:20px;color:var(--blue);font-weight:800}
+  .bar{height:8px;background:var(--surface2);border-radius:999px;margin-top:14px;overflow:hidden}
+  .bar>i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--green));
+    border-radius:999px;transition:width .4s ease}
+  .reset{font-size:12px;color:var(--faint);background:none;border:1px solid var(--line);
+    padding:5px 10px;border-radius:7px;cursor:pointer}
+  .reset:hover{color:var(--text);border-color:var(--muted)}
+
+  /* nav */
+  nav{position:sticky;top:0;z-index:20;background:rgba(247,248,250,.92);backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line)}
+  nav .wrap{display:flex;gap:4px;overflow-x:auto;padding-top:10px;padding-bottom:10px}
+  nav a{font-size:13px;color:var(--muted);text-decoration:none;padding:7px 13px;border-radius:8px;white-space:nowrap;font-weight:500}
+  nav a:hover{background:var(--surface);color:var(--text)}
+
+  /* sections */
+  section{padding:56px 0 8px}
+  .sec-head{margin-bottom:28px}
+  .sec-head .k{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--blue)}
+  .sec-head h2{font-size:28px;font-weight:800;letter-spacing:-.01em;margin-top:6px}
+  .sec-head p{color:var(--muted);font-size:15px;margin-top:8px;max-width:720px}
+
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:var(--shadow);margin-bottom:14px;overflow:hidden}
+  .card-top{display:flex;align-items:center;gap:18px;padding:20px 24px;cursor:pointer;user-select:none}
+  .card-top:hover{background:#fbfcfe}
+  .step-num{flex:none;width:44px;height:44px;border-radius:12px;display:grid;place-items:center;
+    font-weight:800;font-size:17px;background:var(--blue-soft);color:var(--blue);border:1px solid var(--blue-line)}
+  .job .step-num{background:var(--amber-soft);color:var(--amber);border-color:var(--amber-line)}
+  .card-main{flex:1;min-width:0}
+  .card-title{font-size:17px;font-weight:700;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .card-title .w{font-size:12px;color:var(--faint);font-weight:600}
+  .card-sub{font-size:14px;color:var(--muted);margin-top:3px}
+  .card-right{display:flex;align-items:center;gap:14px;flex:none}
+  .cap{font-size:12px;font-weight:600;padding:5px 11px;border-radius:999px;
+    background:var(--amber-soft);color:var(--amber);border:1px solid var(--amber-line)}
+  .job .cap{background:var(--green-soft);color:var(--green);border-color:var(--green-line)}
+  .chev{color:var(--faint);transition:transform .2s;font-size:14px}
+  .card.open .chev{transform:rotate(180deg)}
+  .chk{flex:none;width:26px;height:26px;border-radius:8px;border:2px solid var(--line);
+    background:var(--surface);cursor:pointer;display:grid;place-items:center;font-size:15px;color:transparent;transition:.15s}
+  .chk:hover{border-color:var(--blue)}
+  .chk.done{background:var(--green);border-color:var(--green);color:#fff}
+  .card.done .card-title{text-decoration:line-through;text-decoration-color:var(--faint);color:var(--muted)}
+  .card-body{display:none;padding:0 24px 24px;border-top:1px solid var(--line)}
+  .card.open .card-body{display:block}
+  .card-body h4{font-size:14px;font-weight:700;margin:20px 0 8px;color:var(--text)}
+  .card-body ul,.card-body ol{padding-left:20px;font-size:14px;color:var(--muted)}
+  .card-body li{margin:5px 0}
+  .card-body code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:12.5px;
+    background:var(--surface2);padding:2px 6px;border-radius:5px;color:var(--purple)}
+  .goal{margin-top:18px;background:var(--green-soft);border:1px solid var(--green-line);
+    border-radius:10px;padding:14px 16px;font-size:14px;color:var(--green)}
+  .goal b{font-weight:700}
+  .tip{margin-top:12px;background:var(--surface2);border-left:3px solid var(--faint);
+    border-radius:6px;padding:10px 14px;font-size:13px;color:var(--muted)}
+
+  /* flow */
+  .flow{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+    padding:26px;box-shadow:var(--shadow)}
+  .flow h3{font-size:17px;font-weight:700;margin-bottom:4px}
+  .flow>p{font-size:14px;color:var(--muted);margin-bottom:22px}
+  .flowline{display:flex;align-items:stretch;gap:0;flex-wrap:wrap}
+  .fnode{flex:1;min-width:140px;background:var(--blue-soft);border:1px solid var(--blue-line);
+    border-radius:10px;padding:14px;font-size:13px;font-weight:600;color:var(--blue);text-align:center;position:relative}
+  .farrow{display:grid;place-items:center;padding:0 6px;color:var(--faint);font-size:16px;flex:none}
+
+  /* job panel */
+  .job-panel{background:var(--surface);border:1px solid var(--amber-line);border-radius:var(--radius);
+    padding:26px;box-shadow:var(--shadow)}
+  .job-panel h3{font-size:18px;font-weight:800;margin-bottom:6px}
+  .quote{background:var(--amber-soft);border-left:3px solid var(--amber);border-radius:6px;
+    padding:12px 16px;font-size:14px;color:var(--amber);margin:14px 0 22px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .box{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:16px}
+  .box h4{font-size:14px;font-weight:700;margin-bottom:8px}
+  .box.no h4{color:#b91c1c} .box.yes h4{color:var(--green)}
+  .box ul{padding-left:18px;font-size:13.5px;color:var(--muted)}
+  .box li{margin:4px 0}
+  .salary{display:flex;gap:14px;flex-wrap:wrap;margin-top:16px}
+  .salary div{flex:1;min-width:180px;background:var(--green-soft);border:1px solid var(--green-line);
+    border-radius:10px;padding:14px 16px}
+  .salary .n{font-size:22px;font-weight:800;color:var(--green)}
+  .salary .l{font-size:12.5px;color:var(--muted);margin-top:2px}
+
+  /* bottom */
+  .bottom{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+    padding:26px;margin:56px 0 80px;box-shadow:var(--shadow)}
+  .bottom h3{font-size:17px;font-weight:700;margin-bottom:12px}
+  .bottom ol{padding-left:20px;font-size:14px;color:var(--muted)}
+  .bottom li{margin:6px 0}
+  footer{padding:30px 0 50px;text-align:center;color:var(--faint);font-size:13px;border-top:1px solid var(--line)}
+
+  @media(max-width:720px){
+    h1{font-size:30px} .stats{grid-template-columns:repeat(2,1fr)}
+    .grid2{grid-template-columns:1fr} .card-top{gap:12px;padding:16px}
+    .cap{display:none} .flowline{flex-direction:column} .farrow{padding:6px 0;transform:rotate(90deg)}
+    .step-num{width:38px;height:38px;font-size:15px}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <span class="badge"><span class="dot"></span>零基础 · 18 轮拷问确定 · 专科就业版</span>
+    <h1>AI Agent 学习计划<br><span>从零到就业</span></h1>
+    <p class="sub">五步绑成同一条作品线——从最简 demo 到内容流水线 agent，每一步的成果都是下一步的零件。专科背景追加工程化与求职模块，用作品集对冲学历。</p>
+    <div class="meta">
+      <div>起点 <b>零基础</b></div>
+      <div>投入 <b>每天 3–4 小时</b></div>
+      <div>周期 <b>6–8 个月</b></div>
+      <div>过关 <b>可演示产出</b></div>
+      <div>工具 <b>DeepSeek Harness</b></div>
+    </div>
+    <div class="stats">
+      <div class="stat b"><div class="n">6</div><div class="l">阶段（5 步 + 1 补强）</div></div>
+      <div class="stat a"><div class="n">1</div><div class="l">贯穿始终的作品</div></div>
+      <div class="stat g"><div class="n">18</div><div class="l">条已定决策</div></div>
+      <div class="stat p"><div class="n">8K–13K</div><div class="l">专科起点薪资区间</div></div>
+    </div>
+    <div class="progress-card">
+      <div class="progress-head">
+        <h3>学习进度 · 勾选自动保存</h3>
+        <div class="pct"><b id="pct">0%</b> 已完成 <span id="cnt">0/6</span> <button class="reset" id="reset">重置</button></div>
+      </div>
+      <div class="bar"><i id="bar"></i></div>
+    </div>
+  </div>
+</header>
+
+<nav><div class="wrap">
+  <a href="#overview">总览</a>
+  <a href="#path">五步路径</a>
+  <a href="#job">专科就业</a>
+  <a href="#rules">执行兜底</a>
+  <a href="#decisions">决策记录</a>
+</div></nav>
+
+<section id="overview" class="wrap">
+  <div class="sec-head"><div class="k">Overview</div><h2>核心设计</h2>
+    <p>五步不是孤立的学习模块，而是同一个作品的五轮进化。学的东西全用得上，且有连续的成就感支撑——这是零基础能坚持下来的关键。</p></div>
+  <div class="flow">
+    <h3>最终作品：内容生产流水线 agent</h3>
+    <p>输入一个主题，自动检索资料 → 生成选题大纲 → 写出脚本 → 输出成品</p>
+    <div class="flowline">
+      <div class="fnode">输入主题</div><div class="farrow">→</div>
+      <div class="fnode">RAG 检索</div><div class="farrow">→</div>
+      <div class="fnode">选题大纲</div><div class="farrow">→</div>
+      <div class="fnode">脚本生成</div><div class="farrow">→</div>
+      <div class="fnode">成品输出</div>
+    </div>
+  </div>
+</section>
+
+<section id="path" class="wrap">
+  <div class="sec-head"><div class="k">The Path</div><h2>五步路径 + 就业补强</h2>
+    <p>点击卡片展开具体操作。勾选右侧方框记录完成状态（保存在本机浏览器）。</p></div>
+  <div id="cards"></div>
+</section>
+
+<section id="job" class="wrap">
+  <div class="sec-head"><div class="k">For 专科</div><h2>就业补强策略</h2>
+    <p>专科被卡的是校招和算法岗，不是 AI 应用落地层。策略是：用作品集 + 踩坑记录 + 可交付证明，对冲学历标签。</p></div>
+  <div class="job-panel">
+    <h3>认清哪些门开着</h3>
+    <div class="quote">“面试官问我知道自己错在哪就够了”——一位大专 30 岁技术支持出身的人，投 46 家拿 3 个 offer，最高 12K。真实案例，不是安慰。</div>
+    <div class="grid2">
+      <div class="box no"><h4>✕ 别硬挤</h4><ul>
+        <li>大厂校招</li><li>研究院算法岗</li><li>硕士起点的研发岗</li></ul></div>
+      <div class="box yes"><h4>✓ 重点投</h4><ul>
+        <li>中小企业、行业方案商</li><li>本地智能制造、AI 配套服务商</li>
+        <li>FDE 现场部署（增速最快、门槛相对低）</li><li>“AI + 垂直行业”复合岗</li></ul></div>
+    </div>
+    <div class="salary">
+      <div><div class="n">8K–13K</div><div class="l">一线城市工程实现岗应届口径</div></div>
+      <div><div class="n">10K–12K</div><div class="l">有完整作品集的转行者现实区间</div></div>
+    </div>
+    <p style="font-size:13px;color:var(--faint);margin-top:14px">数据来源：招聘平台公开信息与转行案例，仅供参考，不构成收入承诺。别被“零基础月薪 3 万”的话术带偏——那是资深/架构岗数字。</p>
+  </div>
+</section>
+
+<section id="rules" class="wrap">
+  <div class="sec-head"><div class="k">How</div><h2>执行机制与兜底</h2></div>
+  <div class="card"><div class="card-body" style="display:block;border-top:none;padding:24px">
+    <h4>学习方式</h4><ul><li>AI 当主讲 + 免费教程补充。不懂就追问到懂，让 agent 反过来教你 agent——贴合主线，零成本。</li></ul>
+    <h4>GitHub</h4><ul><li>当成品仓库 + 学习档案。每一步产出都提交——既是过关证据，也是作品集。对专科尤其重要：这是“学历替代品”。</li></ul>
+    <h4>卡壳兜底（零基础最容易断在这里）</h4><ol>
+      <li><b>换 AI / 换问法</b>：一个讲不明白就换另一个，或换个角度问</li>
+      <li><b>搜索验证</b>：关键结论用官方文档交叉验证（AI 会幻觉，新手判断不了对错）</li>
+      <li><b>先跳过</b>：卡住超过 2 小时就往下走，很多疑问后面自然懂</li>
+      <li><b>缩小问题</b>：把报错拆到最小可复现的例子再问</li>
+      <li><b>回到产出</b>：忘了为什么学就看一遍过关产出，只做通向它的事</li></ol>
+    <h4>预算</h4><ul><li>免费额度先用满，真遇到瓶颈再投，别一开始就花钱。</li></ul>
+  </div></div>
+</section>
+
+<section id="decisions" class="wrap">
+  <div class="sec-head"><div class="k">Decisions</div><h2>18 条已定决策</h2>
+    <p>全部经逐个拷问确定，没有留下默认假设。点击展开。</p></div>
+  <div class="card" id="decCard">
+    <div class="card-top" onclick="toggle('decCard')"><div class="step-num" style="font-size:13px">18</div>
+      <div class="card-main"><div class="card-title">拷问决策全记录</div>
+        <div class="card-sub">目标 / 起点 / 工具 / 深度 / 过关标准 / 兜底…</div></div>
+      <div class="card-right"><span class="chev">▾</span></div></div>
+    <div class="card-body"><ul id="decList"></ul></div>
+  </div>
+  <div class="bottom">
+    <h3>按最终目标做了哪些调整</h3>
+    <ol>
+      <li><b>六步 → 五步</b>：删掉视频选题，精力全投能力。</li>
+      <li><b>第三、四步对调</b>：先懂 LLM 再做 agent 开发——不懂原理直接做，只会变成调 API 的搬运工。</li>
+      <li><b>五步绑成作品线</b>：每步产出是最终作品的模块，不是孤立练习。</li>
+      <li><b>第 4 步加“拆源码”</b>：只用插件工具学不到 agent 的本质，目标是“会开发”不是“会配置”。</li>
+      <li><b>过关标准落地</b>：从“自我感觉学会了”变成“拿得出可演示产出”。</li>
+      <li><b>追加专科就业补强</b>：服务化 + 容器化 + 公网演示 + 定向投递。</li>
+    </ol>
+  </div>
+</section>
+
+<footer>AI Agent 学习计划 · 制定于 2026-11-21 · 进度保存在本机浏览器</footer>
+
+<script>
+const steps=[
+  {id:1,title:'建立感性认识 + 环境就绪',weeks:'1–2 周',cap:'工具力',
+   sub:'作品种子：主题 → 文案的最简 demo',
+   body:`<h4>任务 1.1 装环境（第 1 天）</h4><ul>
+     <li>去 <code>nodejs.org</code> 下载 Node.js 22.19+（LTS），默认安装</li>
+     <li>终端输入 <code>node -v</code>，显示 v22.x.x 即成功</li>
+     <li>输入 <code>npx @deepseek-ai/dsh web</code>，浏览器打开 <code>http://127.0.0.1:3080</code></li></ul>
+   <h4>任务 1.2 配模型（第 1–2 天）</h4><ul>
+     <li><code>platform.deepseek.com</code> 注册并创建 API key（先充 10–20 元或用免费额度）</li>
+     <li>填入 Harness 设置，发一句“你好”能收到回复 → 成功</li></ul>
+   <h4>任务 1.3 干三件真事（第 3–7 天）</h4><ul>
+     <li>整理文件夹、分析表格、写一份 Markdown 文档</li>
+     <li>关键是让它“动手做事”，不是陪聊——这就是 agent 与聊天机器人的区别</li></ul>
+   <div class="goal"><b>✅ 过关产出：</b>输入主题 → 输出文案的最简 demo，能独立跑起来 + 一句话讲清 agent 是什么。</div>`},
+  {id:2,title:'Python 够用 + Git，造工具',weeks:'2–3 周',cap:'编程力',
+   sub:'作品进化：生成脚本 + 笔记切片脚本',
+   body:`<h4>任务 2.1 Python 入门</h4><ul>
+     <li>按顺序学 7 点：变量 → 判断循环 → 列表字典 → 函数 → 文件读写 → 异常 → 调 API</li>
+     <li>让 AI 一次讲一个点、出题考你，答对再往下；B站教程做第二视角</li></ul>
+   <h4>任务 2.2 Git + GitHub</h4><ul>
+     <li>学会 5 个命令：<code>git init</code> <code>git add .</code> <code>git commit</code> <code>git clone</code> <code>git push</code></li></ul>
+   <h4>任务 2.3 写两个工具脚本</h4><ul>
+     <li><code>gen_content.py</code>：输入主题，调 DeepSeek API 输出文案</li>
+     <li><code>split_notes.py</code>：读 Markdown，按段落切片存 JSON</li>
+     <li>两个都提交 GitHub，各写 README</li></ul>
+   <div class="goal"><b>✅ 过关产出：</b>两个脚本能独立跑通 + GitHub 有连续提交 + 能讲明白每段代码。</div>
+   <div class="tip">注：CS 原理不系统学，放到第 3 步按需补。</div>`},
+  {id:3,title:'懂 LLM 全链路，装记忆',weeks:'4–6 周',cap:'认知力',
+   sub:'作品进化：能读你笔记的 RAG 助手',
+   body:`<h4>任务 3.1 搞懂概念</h4><ul>
+     <li>token / 上下文窗口 / 注意力机制 / RAG / 微调，每个能用大白话讲出来</li>
+     <li>看 3Blue1Brown 的 Transformer 可视化视频（B站有搬运）</li>
+     <li>让 AI 逐个讲、出题考你。<b>不碰模型训练</b></li></ul>
+   <h4>任务 3.2 动手跑通 RAG</h4><ul>
+     <li>准备自己的 Markdown 笔记 → 用工具 B 切片 → 转向量（用现成工具）→ 存 <code>chromadb</code></li>
+     <li>提问时先检索相关片段，连同一问题发给模型</li></ul>
+   <h4>任务 3.3 按需补 CS 原理</h4><ul><li>哪里卡补哪里：向量→线性代数直觉；API→网络基础；编码→字符集</li></ul>
+   <div class="goal"><b>✅ 过关产出：</b>问“我笔记里关于 XX 说了什么”，能从笔记找出正确内容回答；能讲清切片、embedding、RAG 是什么。</div>`},
+  {id:4,title:'Agent 开发工程',weeks:'6–8 周',cap:'工程力',
+   sub:'作品进化：会调工具的半自动 agent',
+   body:`<h4>任务 4.1 拆透源码</h4><ul>
+     <li>读 DeepSeek Harness 插件示例，或 <code>smolagents</code> 等小框架源码</li>
+     <li>画出 agent loop：提问 → 思考 → 选工具 → 执行 → 回灌 → 输出</li>
+     <li>让 AI 逐行讲，直到你能讲清每一环</li></ul>
+   <h4>任务 4.2 做自己的插件</h4><ul>
+     <li>先跑通官方“你好”插件 → 把生成脚本包成插件 → 把 RAG 助手包成插件</li>
+     <li>做编排：输入主题 → 自动检索 → 调生成 → 输出</li></ul>
+   <h4>任务 4.3 处理失败</h4><ul><li>故意让工具报错，加上重试/换方案，而不是直接崩</li></ul>
+   <div class="goal"><b>✅ 过关产出：</b>会调工具的半自动 agent，能自动“检索 + 生成”；讲得清架构，工具失败不会崩。</div>
+   <div class="tip">这一步最硬，卡住正常。用兜底机制：换 AI 问 / 换问法 / 搜索验证 / 先跳过。</div>`},
+  {id:5,title:'内容流水线实战，作品成型',weeks:'4–6 周',cap:'交付力',
+   sub:'作品成型：内容流水线 agent 完整版',
+   body:`<h4>任务 5.1 串成流水线</h4><ul>
+     <li>输入主题 → RAG 检索 → 生成选题大纲 → 写脚本 → 输出成品 Markdown</li></ul>
+   <h4>任务 5.2 包装成企业案例</h4><ul>
+     <li>设定“帮小公司把内容生产自动化”，写说明文档：痛点 / 方案 / 流程演示 / 改进方向</li></ul>
+   <h4>任务 5.3 整理成品仓库</h4><ul><li>GitHub 代码 + README（项目是什么、怎么跑、架构图、设计思路）</li></ul>
+   <div class="goal"><b>✅ 过关产出：</b>完整可跑的内容流水线 agent + 说明文档 + GitHub 仓库。验收：连续跑 3 个不同主题都正常产出。</div>`},
+  {id:6,title:'就业补强（专科版）',weeks:'6–8 周追加',cap:'就业力',job:true,
+   sub:'服务化 + Docker + 公网演示 + 作品集 + 定向投递',
+   body:`<h4>任务 6.1 服务化</h4><ul>
+     <li>学 FastAPI（路由、请求参数、返回 JSON），把 agent 包成 HTTP 接口</li>
+     <li><code>uvicorn</code> 跑起来。<b>过关：</b>另一台设备能远程调用</li></ul>
+   <h4>任务 6.2 容器化</h4><ul>
+     <li>学 Docker 三概念，写 Dockerfile，<code>docker build</code> + <code>docker run</code></li>
+     <li><b>过关：</b>删掉本地环境，纯靠 Docker 能重跑</li></ul>
+   <h4>任务 6.3 公网演示</h4><ul>
+     <li>部署到云服务器或免费 PaaS（Render / Railway）</li>
+     <li><b>过关：</b>任何人打开网址都能用你的 agent</li></ul>
+   <h4>任务 6.4 作品集打磨</h4><ul>
+     <li>README 写全 + <b>保留踩坑记录</b> + 3–5 分钟演示录屏（本地即可，不发平台）</li></ul>
+   <h4>任务 6.5 定向投递</h4><ul>
+     <li>岗位关键词：AI 应用开发 / 智能体开发 / RAG 工程师 / 大模型交付 / FDE</li>
+     <li>投中小企业 / 方案商，避开大厂校招；有行业经验走“AI + 行业”</li>
+     <li><b>过关：</b>投 30+ 份，拿到面试并能现场演示</li></ul>
+   <div class="goal"><b>✅ 过关产出：</b>一个能现场打开的公网系统 + 讲得清的踩坑记录 + 定向投递拿到面试。</div>`}
+];
+
+const decisions=[
+  '终极目标：能力导向为主，变现后置','起点：几乎零基础','时间：每天 3–4 小时','企业落地：模拟场景练手',
+  '起步工具：DeepSeek Harness（免费、无需海外账号）','基础深度：Python 够用即止 + Git 基础',
+  '落地场景：内容流水线 agent（包装成小企业案例）','视频：不发','原第五步：彻底删除',
+  '学习方式：AI 当主讲 + 免费教程补充','预算：先用免费','网络：能访问海外但无账号 → 用 DeepSeek',
+  'LLM 深度：概念 + 够用动手，不碰训练','Agent 开发：顺 DeepSeek Harness 插件体系','收尾：落成文档',
+  '过关标准：可演示产出为硬门槛','GitHub：成品仓库 + 学习档案','卡壳兜底：换 AI / 换问法 + 搜索验证'
+];
+
+const KEY='aiagent-plan-progress-v1';
+let done=JSON.parse(localStorage.getItem(KEY)||'[]');
+
+function render(){
+  document.getElementById('cards').innerHTML=steps.map(s=>`
+    <div class="card ${s.job?'job':''} ${done.includes(s.id)?'done':''}" id="card${s.id}">
+      <div class="card-top" onclick="toggle('card${s.id}')">
+        <div class="step-num">${s.id}</div>
+        <div class="card-main"><div class="card-title">${s.title} <span class="w">${s.weeks}</span></div>
+          <div class="card-sub">${s.sub}</div></div>
+        <div class="card-right"><span class="cap">${s.cap}</span>
+          <div class="chk ${done.includes(s.id)?'done':''}" onclick="event.stopPropagation();tick(${s.id})" title="标记完成">✓</div>
+          <span class="chev">▾</span></div>
+      </div>
+      <div class="card-body">${s.body}</div>
+    </div>`).join('');
+  document.getElementById('decList').innerHTML=decisions.map((d,i)=>`<li><b>${i+1}.</b> ${d}</li>`).join('');
+  update();
+}
+function toggle(id){document.getElementById(id).classList.toggle('open')}
+function tick(id){
+  done=done.includes(id)?done.filter(x=>x!==id):[...done,id];
+  localStorage.setItem(KEY,JSON.stringify(done));render();
+}
+function update(){
+  const pct=Math.round(done.length/steps.length*100);
+  document.getElementById('pct').textContent=pct+'%';
+  document.getElementById('cnt').textContent=done.length+'/'+steps.length;
+  document.getElementById('bar').style.width=pct+'%';
+}
+document.getElementById('reset').onclick=()=>{
+  if(confirm('确定清空所有进度？')){done=[];localStorage.setItem(KEY,'[]');render()}
+};
+render();
+</script>
+</body>
+</html>
