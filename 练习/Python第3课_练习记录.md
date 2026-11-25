@@ -158,6 +158,51 @@ print(a)
 2. **少逗号坑**：`"w" encoding="utf-8"` 漏逗号 → Python 连成 `wencoding` → `TypeError: 'wencoding' is an invalid keyword argument`。修法：`"...", "w", encoding=...` 逗号隔开
 3. **`wencoding` 手滑**：改逗号时模式处多敲个 `w`。修法：`encoding` 拼写检查
 
+## 六、字典（dict，11-25 下午）
+
+日期：2026-11-25　形式：详细讲解 + 4 道题 + 大量概念追问
+
+| # | 题目 | 我的答案 | 判定 |
+|---|---|---|---|
+| 1 | 建 `cat={"name":"咪咪","age":3}` 并打印咪咪 | 起初写 `cat{"咪咪",3}`（缺等号、花括号里是集合不是字典），纠正后 `print(cat["name"])` 输出咪咪 | ✅ |
+| 2 | 改 age=4、加 color=橘色、删 name | `cat["age"]=4` / `cat["color"]="橘色"` / `del cat["name"]`，输出 `{'age':4,'color':'橘色'}` | ✅ 一次过 |
+| 3 | `for key in d: print(key,d[key])` 输出 | "a 1 / b 2" 方向对；追问 print 逗号隔开的含义 | ✅ |
+| 4 | 从 `order={"coffee":{"items":[...]}}` 取"拿铁" | 三层路径对，引号嵌套写错 `["coffee["items[1]"]"]`，纠正为 `["coffee"]["items"][1]` 输出拿铁 | ✅ |
+
+### 要点（字典）
+
+- 字典 = 带标签的格子，`{"键": 值}` 成对存；键加引号，值看类型
+- 列表用数字下标 `fruits[1]`，字典用键名 `cat["name"]`——同一对 `[]`，列表填数字、字典填键
+- 增删改查：`字典["键"]` 查（不存在报 KeyError，可用 `.get()`）；`字典["键"]=值` 键存在则改、不存在则增；`del 字典["键"]` 删
+- 遍历：`for key in d: print(key, d[key])`；print 多参数用逗号分隔、自动空格连接
+- 字典可嵌套（值是字典/列表）= API 返回数据的结构；取值口诀"看 `{` 用 `["键"]`，看 `[` 用 `[数字]`"，一节节往后接 `data["choices"][0]["message"]["content"]`
+- 字典（内存数据结构）与 JSON（文本格式）：`json.dump` 写出、`json.load` 读回
+- 三种括号分工：`()` 调用函数、`[]` 取值、`{}` 造字典
+
+### 概念追问（用户高频问，均解答）
+
+- `person`/`fruits`/`d` 是变量名可随意改（d=dict 首字母简称），关键字（if/for/dict/print）才不能当变量名
+- `key` 是循环变量可改名，每轮拿到一个键，跟 `i` 是同一套路
+- `[]` 是通用"取值"动作，"开柜子拿指定那一个"
+- `d[key]` 输出 `1`（int，柜子里装的值）而非 "d1"；要文字 "d1" 得写 `"d"+str(d[key])`（字符串拼接）
+- 变量赋值必须等号（`cat{...}` 报错）；`{"咪咪",3}` 是集合不是字典
+
+### 加练 5 题（16:10，全过）
+
+| # | 题目 | 我的答案 | 判定 |
+|---|---|---|---|
+| 1 | 建 student 字典、改 score=95、打印"小红 95" | `student["score"]=95` + `print(student["name"],student["score"])` | ✅ 一次过 |
+| 2 | 遍历 info 打印"键是值" | `print(key+"是"+str(info[key]))`，主动用 str() 转数字 | ✅ 一次过（str 坑已内化） |
+| 3 | 从 `data={"users":[{"name":"张三"},{"name":"李四"}]}` 取"李四" | 初写 `data[users][1][李四]`（users 缺引号 + 最后一层用值当键），纠正为 `["users"][1]["name"]` | ✅ |
+| 4 | 找两行错：`{"苹果","香蕉"}` 和 `y{"a":1}` | "x 只有值没有键、y 没有赋值"——判断全对，实测确认为 set 缺键 / SyntaxError | ✅ |
+| 5 | `d.get("b")` 输出什么、为什么没报错 | "None，没找到 b 键"——✅；追问"是否所有查询查不到都这样"→ 讲解 `.get()` 返回 None vs `[]` 报 KeyError | ✅ |
+
+### 补充要点
+
+- `.get(键)`：键不存在返回 `None`（温柔，不崩）；`字典[键]`：键不存在报 `KeyError`（硬性，程序中断）
+- `None` 类型 `NoneType`，与函数无 return 时拿到的是同一个值
+- 集合 set = `{"值","值"}` 无冒号；字典 dict = `{"键":值}` 有冒号。判断看有没有冒号
+
 ## 衔接
 
-while、列表、函数、文件读写已过；print/return、int/str、`\t` 转义、逗号、拼写五个坑均已填实。剩：异常处理 → API → 两个工具脚本（正在写 `split_notes.py`，骨架已给待跑通）→ Git 远程 push。
+while、列表、函数、文件读写、字典已过；print/return、int/str、`\t` 转义、逗号、拼写五个坑均已填实；`split_notes.py` 已跑通并提交（commit 4062953 / dd4fca8）。剩：异常处理 → API（`gen_content.py` 前提）→ `gen_content.py` → Git 远程 push。下一步建议进 API 课（字典是 API 数据结构基础，刚学完正衔接）。**加练 5 题及字典一节改动尚未提交，下次 commit 带上。**
