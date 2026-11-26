@@ -35,6 +35,38 @@
 - "看不懂英文怎么识别错误类型" → 看报错最后一行冒号前的单词，抄进 except；或用 `except Exception:` 万能兜底；常见类型混脸熟即可（ValueError/KeyError/TypeError/IndexError/FileNotFoundError）
 - "异常没接住是不是还能继续" → 不能，程序当场终止，后面的代码一行都不跑（实测退出码 1）
 
+## 七、API 调用（11-26 下午）
+
+### 讲解要点
+
+- **API = 用代码"点外卖"**：你的程序发请求（下单）→ 服务器处理后返回响应（外卖）
+- **请求里带**：地址 URL + 内容 + 身份密钥（API key）
+- **三步走**：`import requests` → `r = requests.get(网址, timeout=8)` → `data = r.json()`
+- `r.status_code` 看状态码（200=成功）；`r.json()` 把响应的 JSON 文本转成**字典**（= 昨天 `json.dump` 的反向操作）
+- 响应是嵌套字典，取值用昨天练的 `data["title"]` / `data["choices"][0]["message"]["content"]`
+- GET = "给我数据"（参数在网址里）；POST = "我给你数据处理"（参数在请求体里，DeepSeek 用 POST）
+
+### API 第一题：api_test.py（GET 免 key 接口）
+
+```python
+import requests
+r = requests.get("https://jsonplaceholder.typicode.com/posts/1", timeout=8)
+print("状态码:", r.status_code)
+data = r.json()
+print("标题:", data["title"])
+print("作者编号:", data["userId"])
+```
+
+实测输出：状态码 200 / 一行英文标题 / 作者编号 1。commit `493cf26`。
+
+### ⚠️ 新增坑：多个 Python 环境，库装错解释器
+
+- **现象**：命令行测 requests 已装（2.34.2，在 3.13.14），但用户 IDLE 跑 `import requests` 报 `ModuleNotFoundError`
+- **根因**：系统有多个 Python。命令行=WorkBuddy 自带 3.13.14（有 requests）；IDLE=用户自己的 3.12.10（`C:\Users\21272\AppData\Local\Programs\Python\Python312\python.exe`，无 requests）。库是装给**某个解释器**的，不是装给电脑的
+- **修法**：给谁运行就给谁装——`Python312\python.exe -m pip install requests`（已执行，装好 2.34.2）。用 3.12 实跑用户脚本，输出正确
+- **记住**：以后 `ModuleNotFoundError` 先想"是不是装到另一个 Python 去了"；`py -0p` 可列出所有解释器。这也是为什么"我这边能跑你那边不能"——不是代码问题，是环境不同
+- **连带教训**：助手说"已装好"要说明**装在哪个解释器**，否则误导用户（这次就发生了）
+
 ## 衔接
 
-异常处理已过。下一个点：API 调用（装 requests，发一个网络请求；响应就是昨天学的嵌套字典）。之后工具 A `gen_content.py` → Git 远程 push。
+异常处理、API GET 已过。剩下：API POST（带 key 调 DeepSeek）→ 工具 A `gen_content.py` → Git 远程 push。API key 需用户去 platform.deepseek.com 注册获取（助手无法代做）；key 到手前用免 key 的 jsonplaceholder 接口练 HTTP 流程。
