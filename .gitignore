@@ -1,3 +1,4 @@
 .workbuddy/
 *.pyc
 __pycache__/
+my_key.txt
