@@ -31,16 +31,16 @@ def 生成文案(主题):
     # 请求体：要发给服务器的数据，是字典（会自动转成 JSON）
     # 模型名照官方文档填（2026-11 核实）：deepseek-flash 便宜快，deepseek-v4-pro 更强更贵
     请求体 = {
-        "model": "deepseek-flash",
+        "model": "deepseek-flash",#model不能更改这是官方规定的键
         "messages": [
-            {"role": "user", "content": "请围绕主题「" + 主题 + "」写一段 100 字左右的短文。"}
-        ],
+            {"role": "user", "content": "请围绕主题「" +主题 + "」写一段 100 字左右的短文。"}
+        ],#用+把主题套进去
         "stream": False,
         "thinking": {"type": "disabled"},   # 关掉思考模式，只要最终文案
     }
 
     # 发 POST 请求：把问题交出去，拿回回答
-    响应 = requests.post(API_URL, json=请求体, headers=请求头, timeout=30)
+    响应 = requests.post(API_URL, json=请求体, headers=请求头, timeout=30)#将dee seek传回来的结果赋值给响应
 
     # 先看状态码，把常见错误翻译成人话（延续异常处理那一课）
     if 响应.status_code == 401:
@@ -49,8 +49,8 @@ def 生成文案(主题):
         raise Exception("余额不足，去 platform.deepseek.com 充值")
 
     # 响应转成字典，再一层层取出模型回复的文字
-    数据 = 响应.json()
-    return 数据["choices"][0]["message"]["content"]
+    数据 = 响应.json()#将响应内的东西以json的格式转换成字典
+    return 数据["choices"][0]["message"]["content"]#数据类型可以查询官方文档
 
 
 # ===== 主程序 =====
