@@ -2,3 +2,4 @@
 *.pyc
 __pycache__/
 my_key.txt
+rag_db/
